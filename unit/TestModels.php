@@ -55,24 +55,28 @@ class TestModels extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Проверка работы со свойством name
+     * Проверка работы со свойствами
      */
-    function testCorrectPopulateFieldsName() {
+    function testCorrectPopulateFields() {
         for ($i = 0; $i < 10; $i++) {
-            $field = $this->randStr();
             $model = new \Core\Models\Customer();
-            $model->__set('name', $field);
-            //проверка что значение корректно утсановилось
-            $this->assertSame($field, $model->__get('name'));
-            $id = $model->insertToDB();
-            
-            $model = new \Core\Models\Customer();
-            $model->getById($id);
-            //проверка на корректность значения после сохранения/извлечения из бд
-            $this->assertSame($field, $model->__get('name'));
+            $this->correctPopulateFieldsWorker("name", $model);
+            $model = new \Core\Models\Product();
+            $this->correctPopulateFieldsWorker("title", $model);
         }
     }
     
+    function correctPopulateFieldsWorker($fieldName, $model) {
+        $field = $this->randStr();
+        $model->__set($fieldName, $field);
+        //проверка что значение корректно утсановилось
+        $this->assertSame($field, $model->__get($fieldName));
+        $id = $model->insertToDB();
+        $model->getById($id);
+        //проверка на корректность значения после сохранения/извлечения из бд
+        $this->assertSame($field, $model->__get($fieldName));
+    }
+
     /**
      * Генератор массива params
      * @return type
